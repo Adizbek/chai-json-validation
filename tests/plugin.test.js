@@ -57,4 +57,59 @@ describe('Plugin test', function () {
     json.should.haveSchema([isEven])
   })
 
+  it('should validate schema', function () {
+    let json = [{
+      'id': 172188,
+      'max_memory': 1608,
+      'max_time': 116,
+      'active_test': 50,
+      'status': 9,
+      'language_id': 3,
+      'task_id': 93,
+      'olympiad_id': null,
+      'created_at': '2021-04-05T22:58:52.000Z',
+      'user': { 'username': 'programmer0324', 'name': 'Avazbek Murataliyev' },
+      'task': {
+        'id': 93,
+        'number': '0082',
+        'translations': [{ 'title': 'Игра в камни', 'locale': 'ru' }, { 'title': 'Toshlar o’yini', 'locale': 'uz' }]
+      }
+    }, {
+      'id': 172187,
+      'max_memory': 3668,
+      'max_time': 149,
+      'active_test': 10,
+      'status': 9,
+      'language_id': 3,
+      'task_id': 55,
+      'olympiad_id': null,
+      'created_at': '2021-04-05T22:51:20.000Z',
+      'user': { 'username': 'programmer0324', 'name': 'Avazbek Murataliyev' },
+      'task': {
+        'id': 55,
+        'number': '0048',
+        'translations': [{ 'title': 'Треугольник Флойда', 'locale': 'ru' }, {
+          'title': 'Floyd uchburchagi',
+          'locale': 'uz'
+        }]
+      }
+    }]
+
+    json.should.haveSchema([{
+      id: Number,
+      max_memory: Number,
+      active_test: Number,
+      status: Number,
+      language_id: Number,
+      task_id: Number,
+      olympiad_id: Number,
+      created_at: String,
+      user: { username: String, name: String },
+      task: {
+        id: Number,
+        number: String,
+        translations: [{ title: String, locale: String }]
+      }
+    }])
+  })
 })

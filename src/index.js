@@ -1,6 +1,14 @@
 const chai = require('chai')
 
 /**
+ * @param object
+ * @return {boolean}
+ */
+function isObject (object) {
+  return object && typeof object === 'object' && object.constructor.name === 'Object'
+}
+
+/**
  * @param type
  * @param test
  * @return {boolean}
@@ -17,6 +25,8 @@ function checkSingle (type, test) {
     return typeof test === 'boolean'
   } else if (Array.isArray(type)) {
     return checkArray(type, test)
+  } else if (isObject(type)) {
+    return checkObject(type, test)
   } else if (type instanceof RegExp) {
     type.lastIndex = 0
     return type.test(test)
@@ -67,7 +77,7 @@ function checkArray (expected, actual) {
 function match (expected, actual) {
   if (Array.isArray(expected)) {
     return checkArray(expected, actual)
-  } else if (expected && typeof expected === 'object' && expected.constructor.name === 'Object') {
+  } else if (isObject(expected)) {
     return checkObject(expected, actual)
   }
 
@@ -79,8 +89,8 @@ function jsonSchema (schema) {
 
   this.assert(
     matches,
-    'expected #{this} to match the given schema',
-    'expected #{this} to not match the given schema',
+    `expected #{this}\n${JSON.stringify(this._obj, null, 2)}\nto match the given schema`,
+    `expected #{this}\n${JSON.stringify(this._obj, null, 2)}\nto not match the given schema`,
   )
 }
 
