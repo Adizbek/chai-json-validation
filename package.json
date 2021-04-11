@@ -1,0 +1,15 @@
+{
+  "name": "chai-json-validation",
+  "version": "0.0.1",
+  "description": "Chai JSON object validation",
+  "main": "src/index.js",
+  "repository": "https://github.com/Adizbek/chai-json-validation",
+  "author": "Adizbek Ergashev",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.2.16",
+    "@types/mocha": "^8.2.2",
+    "chai": "^4.3.4",
+    "mocha": "^8.3.2"
+  }
+}
