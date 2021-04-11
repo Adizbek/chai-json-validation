@@ -112,4 +112,14 @@ describe('Plugin test', function () {
       }
     }])
   })
+
+  it('should have strict check', function () {
+    let json = { name: 'Adizbek' }
+    json.should.haveSchemaStrict({ name: String })
+
+    let jsonNotStrict = { name: 'Adizbek', password: 123123 }
+
+    jsonNotStrict.should.not.haveSchemaStrict({ name: String })
+    jsonNotStrict.should.haveSchema({ name: String })
+  })
 })

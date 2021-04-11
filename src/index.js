@@ -24,9 +24,9 @@ function checkSingle (type, test) {
   } else if (type === Boolean) {
     return typeof test === 'boolean'
   } else if (Array.isArray(type)) {
-    return checkArray(type, test)
+    return checkArray.call(this, type, test)
   } else if (isObject(type)) {
-    return checkObject(type, test)
+    return checkObject.call(this, type, test)
   } else if (type instanceof RegExp) {
     type.lastIndex = 0
     return type.test(test)
@@ -47,8 +47,22 @@ function checkObject (expected, actual) {
     return false
   }
 
+  if (this.__flags.strictSchemaValidation) {
+    let expectedKeys = Object.keys(expected)
+    let actualKeys = Object.keys(actual)
+
+    let isOnlyRequiredKeysPresent = expectedKeys.length === actualKeys.length && expectedKeys.every(key => actualKeys.includes(key))
+
+    if (!isOnlyRequiredKeysPresent) {
+      this.assert(
+        false,
+        `Actual keys are not match to expected\nExpected: ${expectedKeys}\nActual: ${actualKeys}`
+      )
+    }
+  }
+
   return Object.entries(expected).every(([key, type]) => {
-    return checkSingle(type, actual[key])
+    return checkSingle.call(this, type, actual[key])
   })
 }
 
@@ -64,7 +78,7 @@ function checkArray (expected, actual) {
   let matchSchema = expected[0]
 
   return actual.every((object) => {
-    return match(matchSchema, object)
+    return match.call(this, matchSchema, object)
   })
 }
 
@@ -76,28 +90,37 @@ function checkArray (expected, actual) {
  */
 function match (expected, actual) {
   if (Array.isArray(expected)) {
-    return checkArray(expected, actual)
+    return checkArray.call(this, expected, actual)
   } else if (isObject(expected)) {
-    return checkObject(expected, actual)
+    return checkObject.call(this, expected, actual)
   }
 
-  return checkSingle(expected, actual)
+  return checkSingle.call(this, expected, actual)
 }
 
 function jsonSchema (schema) {
-  let matches = match(schema, this._obj)
+  let matches = match.call(this, schema, this._obj)
+
+  let negate = this.__flags.negate
 
   this.assert(
-    matches,
+    negate ? !matches : matches,
     `expected #{this}\n${JSON.stringify(this._obj, null, 2)}\nto match the given schema`,
     `expected #{this}\n${JSON.stringify(this._obj, null, 2)}\nto not match the given schema`,
   )
+}
+
+function jsonSchemaStrict (schema) {
+  this.__flags.strictSchemaValidation = true
+
+  return jsonSchema.call(this, schema)
 }
 
 function jsonMatchPlugin (_chai) {
   const Assertion = chai.Assertion
 
   Assertion.addMethod('haveSchema', jsonSchema)
+  Assertion.addMethod('haveSchemaStrict', jsonSchemaStrict)
 }
 
 module.exports = jsonMatchPlugin

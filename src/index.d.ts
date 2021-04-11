@@ -4,6 +4,7 @@ declare global {
     namespace Chai {
         interface Assertion {
             haveSchema(schema: Object | any[]);
+            haveSchemaStrict(schema: Object | any[]);
         }
     }
 }

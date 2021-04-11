@@ -1,6 +1,6 @@
 {
   "name": "chai-json-validation",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Chai JSON object validation",
   "main": "src/index.js",
   "repository": "https://github.com/Adizbek/chai-json-validation",

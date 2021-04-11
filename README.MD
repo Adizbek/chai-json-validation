@@ -21,7 +21,17 @@ RegExp
 Function
 ```
 
-### Validating object
+## Available methods
+```js
+
+// Can present extra keys in object
+haveSchema()
+
+// Only described keys are allowed, if any extra keys present will fail 
+haveSchemaStrict()
+```
+
+## Validating object
 
 ```js
 let json = { id: 1, name: 'Project A' }
@@ -29,7 +39,7 @@ let json = { id: 1, name: 'Project A' }
 json.should.haveSchema({ id: Number, name: String })
 ```
 
-### Validating array
+## Validating array
 
 ```js
 let json = [
@@ -76,4 +86,13 @@ describe('Plugin test', function () {
     })
   })
 })
+```
+
+### Strict check
+```js
+let json = { name: 'Adizbek', password: '123123', email: 'Mail@gmail.com' }
+
+// assertion will fail, json contains unexpected password and email keys
+// Will pass if only name present
+json.should.haveSchemaStrict({ name: String })
 ```
