@@ -1,6 +1,33 @@
 const chai = require('chai')
 
 /**
+ * @param type
+ * @param test
+ * @return {boolean}
+ */
+function checkSingle (type, test) {
+  // we don't check for null values
+  if (test === null) {
+    return true
+  } else if (type === Number) {
+    return !Number.isNaN(Number(test))
+  } else if (type === String) {
+    return typeof test === 'string'
+  } else if (type === Boolean) {
+    return typeof test === 'boolean'
+  } else if (Array.isArray(type)) {
+    return checkArray(type, test)
+  } else if (type instanceof RegExp) {
+    type.lastIndex = 0
+    return type.test(test)
+  } else if (type instanceof Function) {
+    return type(test)
+  } else {
+    return false
+  }
+}
+
+/**
  * @param {object} expected
  * @param {object} actual
  * @return {boolean}
@@ -11,22 +38,7 @@ function checkObject (expected, actual) {
   }
 
   return Object.entries(expected).every(([key, type]) => {
-    let test = actual[key]
-
-    // we don't check for null values
-    if (test === null) {
-      return true
-    } else if (type === Number) {
-      return !Number.isNaN(Number(test))
-    } else if (type === String) {
-      return typeof test === 'string'
-    } else if (type === Boolean) {
-      return typeof test === 'boolean'
-    } else if (Array.isArray(type)) {
-      return checkArray(type, test)
-    } else {
-      return false
-    }
+    return checkSingle(type, actual[key])
   })
 }
 
@@ -55,11 +67,11 @@ function checkArray (expected, actual) {
 function match (expected, actual) {
   if (Array.isArray(expected)) {
     return checkArray(expected, actual)
-  } else if (typeof expected === 'object' && expected) {
+  } else if (expected && typeof expected === 'object' && expected.constructor.name === 'Object') {
     return checkObject(expected, actual)
   }
 
-  return true
+  return checkSingle(expected, actual)
 }
 
 function jsonSchema (schema) {
